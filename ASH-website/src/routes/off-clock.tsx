@@ -1,118 +1,148 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { pageMeta } from '#/lib/meta'
 import { Reveal } from '#/components/Reveal'
-import { SplitReveal } from '#/components/SplitReveal'
 import { Topo } from '#/components/Topo'
 import { Statement } from '#/components/Statement'
-import { SHOTS } from '#/data/site'
+import { Reel } from '#/components/Reel'
+import { Shot } from '#/components/Shot'
+import { Marquee } from '#/components/Marquee'
+import { Claims } from '#/components/Claims'
+import { SHOTS, LINKS } from '#/data/site'
 
 export const Route = createFileRoute('/off-clock')({
   component: OffClock,
   head: () => ({
     meta: pageMeta({
-      title: 'Off clock — the other half of Ash',
+      title: 'Off clock — the person behind ASHEO, still unnamed',
       description:
-        'Talks, side quests and the builds that never made it to main.',
+        'No team, no funding, no shortcuts. The half of the story with no changelog — handcrafted in the dark, built solo, early to it always.',
     }),
   }),
 })
 
-const NOTES = [
-  {
-    n: '01',
-    title: 'Talks, occasionally',
-    body: 'One conference a year, always the same subject: shipping small things often, and why the boring release beats the big one.',
-  },
-  {
-    n: '02',
-    title: 'Reviews he did not have to do',
-    body: 'Four hundred and some pull requests on other people\'s repos, most of them typo fixes nobody else could be bothered with.',
-  },
-  {
-    n: '03',
-    title: 'The 3AM habit',
-    body: 'Asheo was written between midnight and four for eleven months. He does not recommend it and would do it again.',
-  },
+/** Lines ASH published himself on asheobypasser.net — not invented testimonials. */
+const OWN_LINES = [
+  'No team. No funding. No shortcuts.',
+  'Handcrafted in the dark.',
+  'Built for the ones who ship.',
+  'Early to it. Always.',
+  'Faster. Cleaner. Unstoppable.',
+  'Obsessed beyond reason.',
+  'Your data stays yours.',
+  'Two megabytes of intent.',
 ]
 
 function OffClock() {
   return (
     <>
-      <header className="phero">
+      <header className="phero" data-theme="dark">
+        <div className="phero__bg">
+          <Reel src="/video/rooftop.mp4" poster="/img/ash-stage.jpg" alt="" />
+        </div>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
           <Reveal>
-            <SplitReveal as="span" className="u-eyebrow" color="lime">No changelog for this bit</SplitReveal>
-            <SplitReveal as="h1" className="u-display" color="lime" style={{ marginTop: '1rem', fontSize: 'clamp(3rem, 13vw, 13rem)' }}>
+            <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+              No changelog for this bit
+            </span>
+            <h1 className="fade" style={{ marginTop: '1.1rem' }}>
               Off
               <br />
               <em>clock</em>
-            </SplitReveal>
-            <p
-              className="u-body reveal"
-              style={{ maxWidth: '52ch', marginTop: '1.6rem', opacity: 0.75 }}
-            >
-              What Ash is doing when nothing is deploying. Which, in fairness, is
-              usually still building something.
+            </h1>
+            <p className="u-body fade" style={{ maxWidth: '52ch', marginTop: '1.6rem', opacity: 0.8 }}>
+              The half with no release notes. The mascot travels a Kalos-inspired
+              world of glass stations and blue-hour rooftops. The architect stays
+              faceless — and keeps building.
             </p>
           </Reveal>
         </div>
       </header>
 
-      <section className="sec sec--bone">
-        <div className="wrap split-2">
-          <Reveal as="ul" className="feature-list" stagger={0.06}>
-            {NOTES.map((n) => (
-              <li className="reveal" key={n.n}>
-                <span className="u-mono">{n.n}</span>
-                <div>
-                  <b>{n.title}</b>
-                  <p className="u-body">{n.body}</p>
-                </div>
-              </li>
-            ))}
-          </Reveal>
+      <Marquee
+        big
+        reverse
+        items={['Built solo', 'Handcrafted in the dark', 'No shortcuts', 'Early to it, always']}
+        className="ticker--void"
+      />
 
-          <Reveal className="media-frame">
-            <img className="reveal" src="/img/ash-stage.png" alt="Ash on stage" />
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="sec sec--dark" style={{ position: 'relative', overflow: 'clip' }}>
+      {/* gallery */}
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
-          <Reveal>
-            <SplitReveal as="h2" className="u-display" color="lime" style={{ fontSize: 'clamp(2rem, 6vw, 5.5rem)' }}>
-              Frames from
-              <span className="u-serif u-lime"> the year</span>
-            </SplitReveal>
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Frames from <span className="u-serif u-lime">the world</span>
+            </h2>
+            <span className="sec__index u-mono fade">WAN reels slot straight in</span>
           </Reveal>
-          <Reveal
-            className="collage__grid"
-            stagger={0.08}
-            delay={0.05}
-          >
-            {SHOTS.map((s) => (
-              <div
-                className="shot reveal"
-                key={s.src}
-                data-cursor="View"
-                style={{ ['--col' as string]: s.col, ['--ar' as string]: s.ar }}
-              >
-                <div className="shot__cap u-mono">{s.caption}</div>
-                <figure>
-                  <img src={s.src} alt={s.caption} loading="lazy" />
-                </figure>
-              </div>
+
+          <Reveal className="gallery" stagger={0.08}>
+            {SHOTS.map((s) => {
+              const video = 'video' in s ? s.video : undefined
+              return (
+                <Shot
+                  key={s.src}
+                  src={s.src}
+                  video={video}
+                  caption={s.caption}
+                  ar={s.ar}
+                  speed={s.speed}
+                  className="fade"
+                />
+              )
+            })}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* his own lines */}
+      <section className="sec sec--void" data-theme="dark">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              In his <span className="u-serif u-lime">own words</span>
+            </h2>
+            <span className="sec__index u-mono fade">From asheobypasser.net, verbatim</span>
+          </Reveal>
+          <Reveal className="cards" stagger={0.07}>
+            {OWN_LINES.map((line) => (
+              <blockquote className="cardq fade" key={line}>
+                <span className="cardq__mk" aria-hidden="true">
+                  “
+                </span>
+                <p>{line}</p>
+                <footer>ASH — Edition 01 copy</footer>
+              </blockquote>
             ))}
           </Reveal>
         </div>
       </section>
 
-      <section className="sec cta">
+      {/* solo build claims */}
+      <section className="sec sec--dark" data-theme="dark">
         <div className="wrap">
-          <Statement text="The *best* ideas arrive at *4AM* and are gone by breakfast. Write them down." />
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Built solo, <span className="u-serif u-lime">not outsourced</span>
+            </h2>
+          </Reveal>
+          <Claims />
+        </div>
+      </section>
+
+      <section className="sec cta" data-theme="light">
+        <div className="wrap cta__inner">
+          <Statement text="Not for *everyone*. For the ones who *ship*." />
+          <a
+            className="btn btn--ink"
+            href={LINKS.telegram}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="Message"
+          >
+            <span>Message ASH — @moreash</span>
+          </a>
         </div>
       </section>
     </>

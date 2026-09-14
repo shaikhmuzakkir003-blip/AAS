@@ -1,121 +1,146 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { pageMeta } from '#/lib/meta'
 import { Reveal } from '#/components/Reveal'
-import { SplitReveal } from '#/components/SplitReveal'
 import { Topo } from '#/components/Topo'
-import { HallOfFame } from '#/components/HallOfFame'
-import { Statement } from '#/components/Statement'
-import { STATS } from '#/data/site'
+import { StatsBand } from '#/components/StatsBand'
+import { ModuleGrid } from '#/components/ModuleGrid'
+import { Pipeline } from '#/components/Pipeline'
+import { Permissions } from '#/components/Permissions'
+import { Ledger } from '#/components/Ledger'
+import { Words } from '#/components/Words'
+import { Arrow } from '#/components/Icons'
+import { LINKS, BUILD } from '#/data/site'
 
 export const Route = createFileRoute('/in-prod')({
   component: InProd,
   head: () => ({
     meta: pageMeta({
-      title: 'In prod — everything Ash has shipped',
+      title: 'In prod — the actual Asheo build',
       description:
-        'Asheo, the tooling around it and nine years of builds that are still running.',
+        'The real file map of Asheo v1.6.1: v3 request router, BIN generation engine, gateway matchers, 85 SHA-256-signed files and every permission explained.',
     }),
   }),
 })
 
-const LOG = [
-  {
-    v: 'v3.0.0',
-    when: 'March 2026',
-    what: 'Asheo rewritten on a Rust core. Cold start down from 340ms to 41ms.',
-  },
-  {
-    v: 'v2.6.0',
-    when: 'November 2025',
-    what: 'Cross device sync, end to end encrypted, nothing stored on a server Ash owns.',
-  },
-  {
-    v: 'v2.0.0',
-    when: 'February 2025',
-    what: 'The command palette. Two weeks later installs doubled.',
-  },
-  {
-    v: 'v1.0.0',
-    when: 'June 2023',
-    what: 'Shipped on a Tuesday to fourteen users, eleven of whom were his group chat.',
-  },
-]
-
 function InProd() {
   return (
     <>
-      <header className="phero">
+      <header className="phero" data-theme="dark">
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
           <Reveal>
-            <SplitReveal as="span" className="u-eyebrow" color="lime">Running right now</SplitReveal>
-            <SplitReveal as="h1" className="u-display" color="lime" style={{ marginTop: '1rem', fontSize: 'clamp(3rem, 13vw, 13rem)' }}>
+            <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+              Running right now · {BUILD.version}
+            </span>
+            <h1 className="fade" style={{ marginTop: '1.1rem' }}>
               In
               <br />
               <em>prod</em>
-            </SplitReveal>
-            <p
-              className="u-body reveal"
-              style={{ maxWidth: '52ch', marginTop: '1.6rem', opacity: 0.75 }}
-            >
-              Nine years of builds, every one of them still reachable, most of them
-              still maintained. Ash does not do graveyards.
+            </h1>
+            <p className="u-body fade" style={{ maxWidth: '56ch', marginTop: '1.6rem', opacity: 0.75 }}>
+              Not a mockup deck — the actual build, open on GitHub. A v3 request
+              router, a BIN generation engine, per-gateway matchers and transformers,
+              an offscreen worker, and 85 files each pinned by hash. Read it line by
+              line.
             </p>
+            <a
+              className="btn btn--lime fade"
+              href={LINKS.githubTree}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="Open"
+              style={{ marginTop: '2rem' }}
+            >
+              <span>Open the repository</span>
+              <Arrow />
+            </a>
           </Reveal>
         </div>
       </header>
 
-      <section className="sec sec--bone">
+      <section className="sec sec--bone" data-theme="light" style={{ paddingBlock: 'clamp(3rem,6vw,6rem)' }}>
         <div className="wrap">
-          <div className="stats">
-            {STATS.map((s) => (
-              <div className="stats__item" key={s.label}>
-                <b>{s.value}</b>
-                <span className="u-mono">{s.label}</span>
-              </div>
-            ))}
-          </div>
+          <StatsBand />
         </div>
       </section>
 
-      <section className="sec sec--dark" style={{ position: 'relative', overflow: 'clip' }}>
+      {/* request lifecycle */}
+      <section className="sec sec--void" data-theme="dark">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              One request, <span className="u-serif u-lime">eight stages</span>
+            </h2>
+            <span className="sec__index u-mono fade">Traced through real files</span>
+          </Reveal>
+          <Pipeline />
+        </div>
+      </section>
+
+      {/* module index */}
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
-          <Reveal>
-            <SplitReveal as="h2" className="u-display" color="lime" style={{ fontSize: 'clamp(2rem, 6vw, 5.5rem)' }}>
-              The
-              <span className="u-serif u-lime"> shelf</span>
-            </SplitReveal>
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              The file <span className="u-serif u-lime">index</span>
+            </h2>
+            <span className="sec__index u-mono fade">85 signed files · the ones worth naming</span>
           </Reveal>
-          <HallOfFame />
+          <ModuleGrid />
         </div>
       </section>
 
-      <section className="sec sec--bone">
+      {/* permissions */}
+      <section className="sec sec--void" data-theme="dark">
         <div className="wrap">
-          <Reveal>
-            <SplitReveal as="h2" className="u-display" color="olive" style={{ fontSize: 'clamp(2rem, 6vw, 5.5rem)' }}>
-              Selected
-              <span className="u-serif"> releases</span>
-            </SplitReveal>
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Every <span className="u-serif u-lime">permission</span>
+            </h2>
+            <span className="sec__index u-mono fade">manifest.json · nothing unexplained</span>
           </Reveal>
-          <Reveal as="ul" className="feature-list" stagger={0.06}>
-            {LOG.map((l) => (
-              <li className="reveal" key={l.v}>
-                <span className="u-mono">{l.v}</span>
-                <div>
-                  <b>{l.when}</b>
-                  <p className="u-body">{l.what}</p>
-                </div>
-              </li>
-            ))}
-          </Reveal>
+          <Permissions />
+          <p className="u-mono fade" style={{ marginTop: '1.6rem', opacity: 0.55 }}>
+            Host permissions are &lt;all_urls&gt; because checkouts live on any domain
+            — Cloudflare Turnstile, hCaptcha and reCAPTCHA hosts are hard-excluded.
+          </p>
         </div>
       </section>
 
-      <section className="sec cta">
-        <div className="wrap">
-          <Statement text="Three hundred and twelve releases. *Zero* incidents anyone had to *find out* about on a status page." />
+      {/* ledger */}
+      <section className="sec sec--bone" data-theme="light">
+        <div className="wrap split-2" style={{ alignItems: 'start' }}>
+          <Reveal>
+            <h2 className="u-display fade" style={{ fontSize: 'clamp(2rem,5.4vw,4.8rem)' }}>
+              The signed <span className="u-serif">ledger</span>
+            </h2>
+            <p className="u-body fade" style={{ opacity: 0.7, marginTop: '1.2rem' }}>
+              build-hashes.json pins every file’s SHA-256; build-hashes.sig signs the
+              set. At startup the extension attests the files on disk against that
+              manifest, and only the current release is authorised. A tampered or
+              superseded build fails closed.
+            </p>
+          </Reveal>
+          <Ledger />
+        </div>
+      </section>
+
+      <section className="sec cta" data-theme="light">
+        <div className="wrap cta__inner">
+          <h2 className="u-display cta__big fade">
+            <Words text="Trust the *hash*, not the slogan." step={22} />
+          </h2>
+          <a
+            className="btn btn--ink fade"
+            href={LINKS.github}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="Audit"
+          >
+            <span>Audit it yourself on GitHub</span>
+            <Arrow />
+          </a>
         </div>
       </section>
     </>

@@ -1,31 +1,36 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { NAV, SOCIALS } from '#/data/site'
+import { NAV, SOCIALS, LINKS } from '#/data/site'
 import { gsap, ScrollTrigger } from '#/lib/motion'
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(0)
   const [markOn, setMarkOn] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const menu = useRef<HTMLDivElement>(null)
   const items = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
-  // close on navigation
   useEffect(() => {
     setOpen(false)
   }, [location.pathname])
 
-  // centre monogram appears once the hero is behind you
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
-    const onScroll = () => setMarkOn(window.scrollY > window.innerHeight * 0.6)
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      setMarkOn(y > window.innerHeight * 0.75)
+      // Hide while scrolling down past the hero height; reveal on scroll-up or near top.
+      setHidden(y > lastY + 6 && y > window.innerHeight * 0.9)
+      lastY = y
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // overlay open / close
   useEffect(() => {
     const el = menu.current
     if (!el) return
@@ -34,23 +39,23 @@ export function SiteHeader() {
     if (open) {
       document.documentElement.style.overflow = 'hidden'
       tl.set(el, { visibility: 'visible' })
-        .to(el, {
-          clipPath: 'inset(0 0 0% 0)',
-          duration: 0.75,
-          ease: 'expo.inOut',
-        })
+        .to(el, { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' })
         .from(
           links,
-          { yPercent: 110, duration: 0.7, stagger: 0.055, ease: 'expo.out' },
-          '-=0.35',
+          { yPercent: 115, duration: 0.8, stagger: 0.06, ease: 'expo.out' },
+          '-=0.4',
+        )
+        .from(
+          '.menu__foot > *',
+          { y: 20, opacity: 0, duration: 0.6, stagger: 0.06, ease: 'expo.out' },
+          '-=0.4',
         )
     } else {
       document.documentElement.style.overflow = ''
-      tl.to(el, {
-        clipPath: 'inset(0 0 100% 0)',
-        duration: 0.6,
-        ease: 'expo.inOut',
-      }).set(el, { visibility: 'hidden' })
+      tl.to(el, { clipPath: 'inset(0 0 100% 0)', duration: 0.6, ease: 'expo.inOut' }).set(
+        el,
+        { visibility: 'hidden' },
+      )
     }
     return () => {
       tl.kill()
@@ -59,10 +64,13 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="hdr">
-        <Link to="/" className="hdr__logo" aria-label="Ash, home" data-cursor="Home">
-          <em>Ash</em>
-          <strong>Builds</strong>
+      <header
+        className={`hdr ${hidden && !open ? 'is-hidden' : ''} ${markOn ? 'is-solid' : ''}`}
+        data-theme-ignore
+      >
+        <Link to="/" className="hdr__logo" aria-label="Ash — home" data-cursor="Home">
+          <em>ash</em>
+          <strong>BUILDS</strong>
         </Link>
 
         <span className={`hdr__mark u-eyebrow ${markOn ? 'is-on' : ''}`}>
@@ -70,9 +78,9 @@ export function SiteHeader() {
         </span>
 
         <div className="hdr__right">
-          <Link to="/asheo" className="pill" data-cursor="Get it">
+          <a className="pill" href={LINKS.download} target="_blank" rel="noreferrer" data-cursor="Get it">
             <span>Get Asheo</span>
-          </Link>
+          </a>
           <button
             className={`burger ${open ? 'is-open' : ''}`}
             onClick={() => setOpen((v) => !v)}
@@ -86,7 +94,7 @@ export function SiteHeader() {
         </div>
       </header>
 
-      <div className={`menu ${open ? 'is-open' : ''}`} ref={menu}>
+      <div className={`menu ${open ? 'is-open' : ''}`} ref={menu} data-theme="dark">
         <div className="menu__grid">
           <div className="menu__nav" ref={items}>
             {NAV.map((item, i) => (
@@ -106,7 +114,7 @@ export function SiteHeader() {
           <div className="menu__media" aria-hidden="true">
             {NAV.map((item, i) => (
               <img
-                key={item.img}
+                key={item.to}
                 src={item.img}
                 alt=""
                 className={i === hovered ? 'is-on' : ''}
@@ -117,7 +125,12 @@ export function SiteHeader() {
         </div>
 
         <div className="menu__foot u-mono">
-          <span>Ash · independent developer · building Asheo</span>
+          <span>
+            {`ASH · independent engineer · `}
+            <a href={LINKS.telegram} target="_blank" rel="noreferrer" style={{ color: 'var(--lime)' }}>
+              @moreash
+            </a>
+          </span>
           <div className="menu__socials">
             {SOCIALS.map((s) => (
               <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
@@ -133,7 +146,7 @@ export function SiteHeader() {
 
 export function AshMark() {
   return (
-    <svg width="26" height="18" viewBox="0 0 26 18" fill="none" aria-hidden="true">
+    <svg width="28" height="20" viewBox="0 0 26 18" fill="none" aria-hidden="true">
       <path
         d="M2 17 10 1l6 12 3-6 5 10"
         stroke="currentColor"
