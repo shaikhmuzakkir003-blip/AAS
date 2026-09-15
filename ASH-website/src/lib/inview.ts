@@ -8,7 +8,7 @@ import type { RefObject } from 'react'
  */
 export function useInView<T extends HTMLElement>(
   ref: RefObject<T | null>,
-  { stagger = 0.07, delay = 0, threshold = 0.18 } = {},
+  { stagger = 0.05, delay = 0, threshold = 0.02 } = {},
 ) {
   useEffect(() => {
     const node = ref.current
@@ -29,26 +29,29 @@ export function useInView<T extends HTMLElement>(
       if (!el.style.getPropertyValue('--i')) el.style.setProperty('--i', String(i % 24))
     })
 
+    const reveal = () => {
+      node.classList.add('is-in')
+      fades.forEach((el) => el.classList.add('is-in'))
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            node.classList.add('is-in')
-            fades.forEach((el) => el.classList.add('is-in'))
+            reveal()
             io.disconnect()
           }
         }
       },
-      { threshold, rootMargin: '0px 0px -8% 0px' },
+      { threshold, rootMargin: '120px 0px 80px 0px' },
     )
     io.observe(node)
 
-    // safety: never leave content hidden
+    // safety: never leave content hidden if observer delays
     const safety = window.setTimeout(() => {
-      node.classList.add('is-in')
-      fades.forEach((el) => el.classList.add('is-in'))
+      reveal()
       io.disconnect()
-    }, 5200)
+    }, 1200)
 
     return () => {
       window.clearTimeout(safety)

@@ -21,8 +21,8 @@ export function FaceSplit() {
     }
 
     const ctx = gsap.context(() => {
-      gsap.set([left.current, right.current], { xPercent: (i) => (i === 0 ? -100 : 100) })
-      gsap.set(line.current, { scaleY: 0, transformOrigin: 'top' })
+      gsap.set([left.current, right.current], { xPercent: 0, scale: 1.05 })
+      gsap.set(line.current, { scaleY: 1, transformOrigin: 'top' })
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -33,12 +33,22 @@ export function FaceSplit() {
         },
       })
 
-      tl.to([left.current, right.current], { xPercent: 0, duration: 0.42, ease: 'power2.out' }, 0)
-        .to(line.current, { scaleY: 1, duration: 0.3, ease: 'none' }, 0.32)
+      tl.fromTo(
+        [left.current, right.current],
+        { scale: 1.08, filter: 'brightness(0.75)' },
+        { scale: 1, filter: 'brightness(1)', duration: 0.5, ease: 'power2.out' },
+        0,
+      )
+        .fromTo(
+          line.current,
+          { opacity: 0.4, boxShadow: '0 0 12px rgba(210,255,0,0.3)' },
+          { opacity: 1, boxShadow: '0 0 40px rgba(210,255,0,0.85)', duration: 0.4 },
+          0.1,
+        )
         .from(
           '.face__copy > *',
-          { y: 34, autoAlpha: 0, stagger: 0.05, duration: 0.25 },
-          0.3,
+          { y: 24, autoAlpha: 0, stagger: 0.05, duration: 0.3 },
+          0.2,
         )
     }, node)
 

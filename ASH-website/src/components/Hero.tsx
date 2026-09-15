@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap, ScrollTrigger, reducedMotion } from '#/lib/motion'
 import { BUILD } from '#/data/site'
 import { Topo } from './Topo'
+import { playLaser, playClick } from '#/lib/sound'
 
 const HERO_VIDEO = '/video/hero-unwrap.mp4'
 
@@ -14,8 +15,7 @@ const HERO_VIDEO = '/video/hero-unwrap.mp4'
  *  ACT III — the character itself wipes to the featureless mannequin.
  *            Nobody underneath. The work is the face.
  *
- * Moving the pointer peels the active layer where the cursor is. If a
- * WAN render exists at /video/hero-unwrap.mp4 it scrubs instead.
+ * Interactive Act tabs let visitors jump directly between acts or scrub via scroll.
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null)
@@ -33,6 +33,7 @@ export function Hero() {
   const capC = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const progress = useRef(0)
+  const [activeAct, setActiveAct] = useState<'act1' | 'act2' | 'act3'>('act1')
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -52,7 +53,7 @@ export function Hero() {
           0.15,
         )
         .from(
-          [topbar.current, card.current, cue.current, '.hero__sub'],
+          [topbar.current, card.current, cue.current, '.hero__sub', '.hero__act-nav'],
           { y: 22, opacity: 0, duration: 1, stagger: 0.08 },
           0.3,
         )
@@ -68,7 +69,7 @@ export function Hero() {
       window.removeEventListener('ash:preloaded', start)
     }
     window.addEventListener('ash:preloaded', start)
-    const fallback = window.setTimeout(start, 3200)
+    const fallback = window.setTimeout(start, 2200)
 
     const ctx = gsap.context(() => {
       if (reduce) {
@@ -86,6 +87,14 @@ export function Hero() {
           scrub: 0.7,
           onUpdate: (self) => {
             progress.current = self.progress
+            if (self.progress < 0.35) {
+              setActiveAct('act1')
+            } else if (self.progress < 0.7) {
+              setActiveAct('act2')
+            } else {
+              setActiveAct('act3')
+            }
+
             const v = video.current
             if (v && v.readyState >= 1 && v.duration) {
               v.currentTime = self.progress * v.duration
@@ -180,6 +189,25 @@ export function Hero() {
     }
   }, [])
 
+  const jumpToAct = (act: 'act1' | 'act2' | 'act3') => {
+    playLaser()
+    setActiveAct(act)
+    const sec = section.current
+    if (!sec) return
+    const rect = sec.getBoundingClientRect()
+    const scrollTop = window.scrollY + rect.top
+    const totalHeight = rect.height - window.innerHeight
+
+    let targetRatio = 0.02
+    if (act === 'act2') targetRatio = 0.48
+    if (act === 'act3') targetRatio = 0.88
+
+    window.scrollTo({
+      top: scrollTop + totalHeight * targetRatio,
+      behavior: 'smooth',
+    })
+  }
+
   // optional WAN hero clip — when the file exists it replaces the still acts
   const onVideoReady = (v: HTMLVideoElement) => {
     v.addEventListener('loadeddata', () => stage.current?.classList.add('has-reel'), { once: true })
@@ -231,6 +259,9 @@ export function Hero() {
 
           <div className="hero__grade" />
           <div className="hero__scan" ref={scan} />
+          <div className="hero__reticle" aria-hidden="true">
+            <div className="hero__reticle-inner" />
+          </div>
         </div>
 
         {/* top status row */}
@@ -238,7 +269,46 @@ export function Hero() {
           <span className="tag u-mono">
             <i className="dot" /> {BUILD.edition} · {BUILD.serial}
           </span>
+          <span className="tag u-mono hide-mobile" style={{ color: 'var(--lime)', border: '1px solid rgba(212,255,0,0.3)' }}>
+            ● COORD: 48.8566° N, 2.3522° E [LUMIOSE]
+          </span>
           <span className="tag u-mono">ASHEO {BUILD.version} · MV3 · FREE CORE</span>
+        </div>
+
+        {/* Interactive Act Navigation Controller */}
+        <div className="hero__act-nav u-mono">
+          <button
+            type="button"
+            className={`act-pill ${activeAct === 'act1' ? 'is-active' : ''}`}
+            onClick={() => jumpToAct('act1')}
+            data-cursor="Act I"
+          >
+            <span>01 // KALOS MASCOT</span>
+          </button>
+          <button
+            type="button"
+            className={`act-pill ${activeAct === 'act2' ? 'is-active' : ''}`}
+            onClick={() => jumpToAct('act2')}
+            data-cursor="Act II"
+          >
+            <span>02 // CAP-OFF REVEAL</span>
+          </button>
+          <button
+            type="button"
+            className={`act-pill ${activeAct === 'act3' ? 'is-active' : ''}`}
+            onClick={() => jumpToAct('act3')}
+            data-cursor="Act III"
+          >
+            <span>03 // FACELESS ARCHITECT</span>
+          </button>
+          <a
+            href="#test-bench"
+            className="act-pill act-pill--lime"
+            onClick={() => playClick()}
+            data-cursor="Simulator"
+          >
+            <span>⚡ LIVE SIMULATOR</span>
+          </a>
         </div>
 
         <div className="hero__cue" ref={cue}>

@@ -10,6 +10,7 @@ import { GateWall } from '#/components/GateWall'
 import { Ledger } from '#/components/Ledger'
 import { Steps } from '#/components/Steps'
 import { DownloadCTA } from '#/components/DownloadCTA'
+import { LuhnSimulator } from '#/components/LuhnSimulator'
 import { LINKS } from '#/data/site'
 import { pageMeta } from '#/lib/meta'
 
@@ -107,6 +108,27 @@ function Asheo() {
         big
         items={['41 handlers', '85 signed files', '2.0 MB', 'MV3', 'Zero telemetry', 'Free core']}
       />
+
+      {/* interactive simulator -------------------------------------------- */}
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
+        <Topo className="u-lime" />
+        <div className="wrap" style={{ position: 'relative' }}>
+          <Reveal className="sec__head">
+            <div>
+              <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+                Core Capability · Live Sandbox
+              </span>
+              <h2 className="u-display sec__title fade">
+                Live <span className="u-serif u-lime">BIN engine</span> test
+              </h2>
+            </div>
+            <span className="sec__index u-mono fade">Interactive Module</span>
+          </Reveal>
+          <Reveal>
+            <LuhnSimulator />
+          </Reveal>
+        </div>
+      </section>
 
       {/* features ---------------------------------------------------------- */}
       <section className="sec sec--void" data-theme="dark">

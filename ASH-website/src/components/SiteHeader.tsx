@@ -2,15 +2,26 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { NAV, SOCIALS, LINKS } from '#/data/site'
 import { gsap, ScrollTrigger } from '#/lib/motion'
+import { isSoundEnabled, toggleSound, playClick } from '#/lib/sound'
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(0)
   const [markOn, setMarkOn] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [soundActive, setSoundActive] = useState(false)
   const menu = useRef<HTMLDivElement>(null)
   const items = useRef<HTMLDivElement>(null)
   const location = useLocation()
+
+  useEffect(() => {
+    setSoundActive(isSoundEnabled())
+  }, [])
+
+  const handleSoundToggle = () => {
+    const next = toggleSound()
+    setSoundActive(next)
+  }
 
   useEffect(() => {
     setOpen(false)
@@ -68,7 +79,7 @@ export function SiteHeader() {
         className={`hdr ${hidden && !open ? 'is-hidden' : ''} ${markOn ? 'is-solid' : ''}`}
         data-theme-ignore
       >
-        <Link to="/" className="hdr__logo" aria-label="Ash — home" data-cursor="Home">
+        <Link to="/" className="hdr__logo" aria-label="Ash — home" data-cursor="Home" onClick={() => playClick()}>
           <em>ash</em>
           <strong>BUILDS</strong>
         </Link>
@@ -78,12 +89,24 @@ export function SiteHeader() {
         </span>
 
         <div className="hdr__right">
-          <a className="pill" href={LINKS.download} target="_blank" rel="noreferrer" data-cursor="Get it">
+          <button
+            type="button"
+            className={`sound-btn u-mono ${soundActive ? 'is-active' : ''}`}
+            onClick={handleSoundToggle}
+            title={soundActive ? 'Mute audio feedback' : 'Enable audio feedback'}
+            data-cursor="Sound"
+          >
+            <span>{soundActive ? 'SFX ON' : 'SFX OFF'}</span>
+          </button>
+          <a className="pill" href={LINKS.download} target="_blank" rel="noreferrer" data-cursor="Get it" onClick={() => playClick()}>
             <span>Get Asheo</span>
           </a>
           <button
             className={`burger ${open ? 'is-open' : ''}`}
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => {
+              playClick()
+              setOpen((v) => !v)
+            }}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             data-cursor={open ? 'Close' : 'Menu'}

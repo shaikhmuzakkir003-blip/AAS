@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Hero } from '#/components/Hero'
 import { Statement } from '#/components/Statement'
 import { Terminal } from '#/components/Terminal'
+import { LuhnSimulator } from '#/components/LuhnSimulator'
 import { Collage } from '#/components/Collage'
 import { FaceSplit } from '#/components/FaceSplit'
 import { Marquee } from '#/components/Marquee'
@@ -60,6 +61,27 @@ function Home() {
             <span className="u-eyebrow fade">Message from ASH — verify it yourself</span>
           </Reveal>
           <Terminal />
+        </div>
+      </section>
+
+      {/* interactive test bench ------------------------------------------ */}
+      <section id="test-bench" className="sec sec--void" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
+        <Topo className="u-lime" />
+        <div className="wrap" style={{ position: 'relative' }}>
+          <Reveal className="sec__head">
+            <div>
+              <span className="u-eyebrow fade" style={{ color: 'var(--lime)', display: 'block', marginBottom: '0.6rem' }}>
+                Interactive Bench · Real Luhn Engine
+              </span>
+              <h2 className="u-display sec__title fade">
+                Test the <span className="u-serif u-lime">engine</span> live
+              </h2>
+            </div>
+            <span className="sec__index u-mono fade">Exhibit I — in-browser swap</span>
+          </Reveal>
+          <Reveal>
+            <LuhnSimulator />
+          </Reveal>
         </div>
       </section>
 

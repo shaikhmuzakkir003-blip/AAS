@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { pageMeta } from '#/lib/meta'
 import { Reveal } from '#/components/Reveal'
@@ -7,7 +8,9 @@ import { Reel } from '#/components/Reel'
 import { Shot } from '#/components/Shot'
 import { Marquee } from '#/components/Marquee'
 import { Claims } from '#/components/Claims'
+import { ShotLightbox } from '#/components/ShotLightbox'
 import { SHOTS, LINKS } from '#/data/site'
+import { playClick } from '#/lib/sound'
 
 export const Route = createFileRoute('/off-clock')({
   component: OffClock,
@@ -32,7 +35,16 @@ const OWN_LINES = [
   'Two megabytes of intent.',
 ]
 
+const DEV_MILESTONES = [
+  { date: '2024 · Q1', title: 'The First Luhn Engine', note: 'Single-file vanilla JS script replacing 16-digit form fields in Chrome DevTools.' },
+  { date: '2024 · Q3', title: 'Chromium MV3 Rewrite', note: 'Migrated entirely to declarativeNetRequest rules with offscreen document crypto.' },
+  { date: '2025 · Q2', title: '41 Gateway Matrix', note: 'Expanded coverage from 4 major processors to 41 distinct checkout handlers.' },
+  { date: '2026 · Current', title: 'Edition 01 Release', note: 'Asheo v1.6.1: 85 SHA-256-signed files, zero trackers, fail-closed startup lock.' },
+]
+
 function OffClock() {
+  const [activeShot, setActiveShot] = useState<{ src: string; caption: string } | null>(null)
+
   return (
     <>
       <header className="phero" data-theme="dark">
@@ -74,30 +86,59 @@ function OffClock() {
             <h2 className="u-display sec__title fade">
               Frames from <span className="u-serif u-lime">the world</span>
             </h2>
-            <span className="sec__index u-mono fade">WAN reels slot straight in</span>
+            <span className="sec__index u-mono fade">Click to inspect still frame</span>
           </Reveal>
 
           <Reveal className="gallery" stagger={0.08}>
             {SHOTS.map((s) => {
               const video = 'video' in s ? s.video : undefined
               return (
-                <Shot
+                <div
                   key={s.src}
-                  src={s.src}
-                  video={video}
-                  caption={s.caption}
-                  ar={s.ar}
-                  speed={s.speed}
-                  className="fade"
-                />
+                  onClick={() => {
+                    playClick()
+                    setActiveShot({ src: s.src, caption: s.caption })
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <Shot
+                    src={s.src}
+                    video={video}
+                    caption={s.caption}
+                    ar={s.ar}
+                    speed={s.speed}
+                    className="fade"
+                  />
+                </div>
               )
             })}
           </Reveal>
         </div>
       </section>
 
-      {/* his own lines */}
+      {/* dev milestones timeline */}
       <section className="sec sec--void" data-theme="dark">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              The solo <span className="u-serif u-lime">timeline</span>
+            </h2>
+            <span className="sec__index u-mono fade">Handcrafted from commit 001</span>
+          </Reveal>
+          <Reveal className="timeline-grid" stagger={0.08}>
+            {DEV_MILESTONES.map((m) => (
+              <div className="timeline-card fade" key={m.date}>
+                <span className="u-mono u-lime">{m.date}</span>
+                <h3>{m.title}</h3>
+                <p>{m.note}</p>
+              </div>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* his own lines */}
+      <section className="sec sec--dark" data-theme="dark">
         <div className="wrap">
           <Reveal className="sec__head">
             <h2 className="u-display sec__title fade">
@@ -120,7 +161,7 @@ function OffClock() {
       </section>
 
       {/* solo build claims */}
-      <section className="sec sec--dark" data-theme="dark">
+      <section className="sec sec--void" data-theme="dark">
         <div className="wrap">
           <Reveal className="sec__head">
             <h2 className="u-display sec__title fade">
@@ -145,6 +186,15 @@ function OffClock() {
           </a>
         </div>
       </section>
+
+      {/* Lightbox Modal */}
+      {activeShot && (
+        <ShotLightbox
+          src={activeShot.src}
+          caption={activeShot.caption}
+          onClose={() => setActiveShot(null)}
+        />
+      )}
     </>
   )
 }

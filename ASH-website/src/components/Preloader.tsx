@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BUILD } from '#/data/site'
 
-/** Edition-style boot screen. Locks scroll until the hero assets are primed. */
+/** Edition-style boot screen. Snappy cyber init, then lifts cleanly. */
 export function Preloader() {
   const root = useRef<HTMLDivElement>(null)
   const bar = useRef<HTMLElement>(null)
@@ -11,56 +11,50 @@ export function Preloader() {
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     document.documentElement.classList.toggle('reduce-motion', reduce)
-    document.documentElement.style.overflow = 'hidden'
 
     const finish = () => {
       if (!root.current) return
       root.current.classList.add('is-done')
       setDone(true)
       document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
       window.dispatchEvent(new CustomEvent('ash:preloaded'))
-      window.setTimeout(() => root.current?.remove(), 1300)
+      window.setTimeout(() => root.current?.remove(), 600)
     }
 
-    if (reduce) {
+    if (reduce || sessionStorage.getItem('ash:booted')) {
       finish()
       return
     }
 
-    // prime the hero imagery before the curtain lifts
-    const prime = ['/img/hero-cap-dark.jpg', '/img/hero-nocap-dark.jpg', '/img/anon-void.jpg'].map(
-      (src) =>
-        new Promise((res) => {
-          const im = new Image()
-          im.onload = res
-          im.onerror = res
-          im.src = src
-        }),
-    )
+    sessionStorage.setItem('ash:booted', '1')
+    document.documentElement.style.overflow = 'hidden'
 
     let raf = 0
     const start = performance.now()
-    const DURATION = 1700
+    const DURATION = 680
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / DURATION)
       const eased = 1 - Math.pow(1 - p, 3)
       const v = Math.round(eased * 100)
       if (bar.current) bar.current.style.width = `${v}%`
       if (count.current) count.current.textContent = String(v).padStart(3, '0')
-      if (p < 1) raf = requestAnimationFrame(tick)
+      if (p < 1) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        finish()
+      }
     }
     raf = requestAnimationFrame(tick)
 
-    Promise.race([
-      Promise.all(prime),
-      new Promise((r) => setTimeout(r, 3600)),
-    ]).then(() => {
-      cancelAnimationFrame(raf)
-      const hold = performance.now() - start
-      setTimeout(finish, Math.max(0, 1500 - hold))
-    })
+    const safety = window.setTimeout(finish, 900)
 
-    return () => cancelAnimationFrame(raf)
+    return () => {
+      window.clearTimeout(safety)
+      cancelAnimationFrame(raf)
+      document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
+    }
   }, [])
 
   return (

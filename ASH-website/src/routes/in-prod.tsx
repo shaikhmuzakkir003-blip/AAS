@@ -9,6 +9,7 @@ import { Permissions } from '#/components/Permissions'
 import { Ledger } from '#/components/Ledger'
 import { Words } from '#/components/Words'
 import { Arrow } from '#/components/Icons'
+import { IntegrityRunner } from '#/components/IntegrityRunner'
 import { LINKS, BUILD } from '#/data/site'
 
 export const Route = createFileRoute('/in-prod')({
@@ -64,8 +65,24 @@ function InProd() {
         </div>
       </section>
 
+      {/* live integrity auditor ------------------------------------------ */}
+      <section className="sec sec--void" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
+        <Topo className="u-lime" />
+        <div className="wrap" style={{ position: 'relative' }}>
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Attest the <span className="u-serif u-lime">hashes</span>
+            </h2>
+            <span className="sec__index u-mono fade">SHA-256 build verification</span>
+          </Reveal>
+          <Reveal>
+            <IntegrityRunner />
+          </Reveal>
+        </div>
+      </section>
+
       {/* request lifecycle */}
-      <section className="sec sec--void" data-theme="dark">
+      <section className="sec sec--void" data-theme="dark" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <Reveal className="sec__head">
             <h2 className="u-display sec__title fade">
