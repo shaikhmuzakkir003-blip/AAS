@@ -13,6 +13,7 @@ import { DownloadCTA } from '#/components/DownloadCTA'
 import { LuhnSimulator } from '#/components/LuhnSimulator'
 import { LINKS } from '#/data/site'
 import { pageMeta } from '#/lib/meta'
+import { asset } from '#/lib/asset'
 
 export const Route = createFileRoute('/asheo')({
   component: Asheo,
@@ -166,7 +167,7 @@ function Asheo() {
       <section className="sec sec--bone" data-theme="light">
         <div className="wrap split-2" style={{ alignItems: 'center' }}>
           <Reveal className="popup-mock fade">
-            <img src="/img/ui-popup.png" alt="The Asheo extension popup: BIN field, gateway checks and active toggle" />
+            <img src={asset('/img/ui-popup.png')} alt="The Asheo extension popup: BIN field, gateway checks and active toggle" />
           </Reveal>
           <div>
             <Reveal className="sec__head">
@@ -212,8 +213,8 @@ function Asheo() {
           <Reveal>
             <Peel
               className="fade"
-              skin="/img/ash-model.png"
-              under="/img/anon-void.jpg"
+              skin={asset('/img/ash-model.png')}
+              under={asset('/img/anon-void.jpg')}
               alt="Kalos Ash over the anonymous figure"
             />
             <p className="u-mono fade" style={{ marginTop: '0.8rem', opacity: 0.55 }}>

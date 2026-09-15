@@ -3,6 +3,7 @@ import { gsap, ScrollTrigger, reducedMotion } from '#/lib/motion'
 import { BUILD } from '#/data/site'
 import { Topo } from './Topo'
 import { playLaser, playClick } from '#/lib/sound'
+import { asset } from '#/lib/asset'
 
 const HERO_VIDEO = '/video/hero-unwrap.mp4'
 
@@ -221,7 +222,7 @@ export function Hero() {
 
           <img
             className="hero__layer hero__layer--anon"
-            src="/img/anon-void.jpg"
+            src={asset('/img/anon-void.jpg')}
             alt=""
             aria-hidden="true"
             ref={anon}
@@ -229,7 +230,7 @@ export function Hero() {
           />
           <img
             className="hero__layer hero__layer--nocap"
-            src="/img/hero-nocap-dark.jpg"
+            src={asset('/img/hero-nocap-dark.jpg')}
             alt=""
             aria-hidden="true"
             ref={nocap}
@@ -237,7 +238,7 @@ export function Hero() {
           />
           <img
             className="hero__layer hero__layer--cap"
-            src="/img/hero-cap-dark.jpg"
+            src={asset('/img/hero-cap-dark.jpg')}
             alt="Kalos Ash, the character behind Asheo"
             ref={cap}
             fetchPriority="high"
@@ -249,8 +250,8 @@ export function Hero() {
               if (v) onVideoReady(v)
             }}
             className="hero__layer hero__reel"
-            src={HERO_VIDEO}
-            poster="/img/ash-model.png"
+            src={asset(HERO_VIDEO)}
+            poster={asset('/img/ash-model.png')}
             muted
             playsInline
             preload="auto"

@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import { Reveal } from './Reveal'
 import { PILLARS } from '#/data/site'
 import { playClick } from '#/lib/sound'

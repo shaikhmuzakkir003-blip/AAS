@@ -1,4 +1,5 @@
 import { playClick } from '#/lib/sound'
+import { asset } from '#/lib/asset'
 
 type Props = {
   src: string
@@ -7,6 +8,7 @@ type Props = {
 }
 
 export function ShotLightbox({ src, caption, onClose }: Props) {
+  const resolvedSrc = asset(src)
   return (
     <div className="lightbox-overlay" onClick={onClose}>
       <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
@@ -23,7 +25,7 @@ export function ShotLightbox({ src, caption, onClose }: Props) {
           ✕
         </button>
         <div className="lightbox-image-wrap">
-          <img src={src} alt={caption} />
+          <img src={resolvedSrc} alt={caption} />
         </div>
         <div className="lightbox-bar u-mono">
           <div>
@@ -33,7 +35,7 @@ export function ShotLightbox({ src, caption, onClose }: Props) {
             </span>
           </div>
           <a
-            href={src}
+            href={resolvedSrc}
             download
             className="btn btn--lime"
             onClick={(e) => e.stopPropagation()}

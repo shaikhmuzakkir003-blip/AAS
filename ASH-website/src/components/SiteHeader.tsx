@@ -3,6 +3,7 @@ import { Link, useLocation } from '@tanstack/react-router'
 import { NAV, SOCIALS, LINKS } from '#/data/site'
 import { gsap, ScrollTrigger } from '#/lib/motion'
 import { isSoundEnabled, toggleSound, playClick } from '#/lib/sound'
+import { asset } from '#/lib/asset'
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
@@ -138,7 +139,7 @@ export function SiteHeader() {
             {NAV.map((item, i) => (
               <img
                 key={item.to}
-                src={item.img}
+                src={asset(item.img)}
                 alt=""
                 className={i === hovered ? 'is-on' : ''}
                 loading="lazy"

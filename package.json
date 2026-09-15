@@ -1,0 +1,9 @@
+{
+  "name": "aas",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix ASH-website run dev",
+    "build": "npm --prefix ASH-website run build",
+    "typecheck": "npm --prefix ASH-website run typecheck"
+  }
+}

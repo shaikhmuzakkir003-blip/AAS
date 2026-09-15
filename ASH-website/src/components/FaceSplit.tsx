@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { gsap, ScrollTrigger, reducedMotion } from '#/lib/motion'
 import { Reel } from './Reel'
 import { Arrow } from './Icons'
+import { asset } from '#/lib/asset'
 
 /** Two doors sliding together, pinned: the life in prod vs the life off clock. */
 export function FaceSplit() {
@@ -59,7 +60,7 @@ export function FaceSplit() {
     <section className="faces" ref={section} data-theme="dark" data-cursor="Split">
       <div className="faces__sticky">
         <div className="face" ref={left}>
-          <Reel src="/video/night-coding.mp4" poster="/img/ash-night.jpg" alt="Asheo being built at night" />
+          <Reel src={asset('/video/night-coding.mp4')} poster={asset('/img/ash-night.jpg')} alt="Asheo being built at night" />
           <div className="face__copy">
             <span>Running right now · 01</span>
             <b>In prod</b>
@@ -76,7 +77,7 @@ export function FaceSplit() {
         <div className="face__line" ref={line} />
 
         <div className="face" ref={right}>
-          <Reel src="/video/lumiose-walk.mp4" poster="/img/ash-walk.jpg" alt="Ash walking through Lumiose-inspired light" />
+          <Reel src={asset('/video/lumiose-walk.mp4')} poster={asset('/img/ash-walk.jpg')} alt="Ash walking through Lumiose-inspired light" />
           <div className="face__copy">
             <span>No changelog for this bit · 02</span>
             <b>Off clock</b>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Reel } from './Reel'
+import { asset } from '#/lib/asset'
 
 type ShotProps = {
   src: string
@@ -14,6 +15,8 @@ type ShotProps = {
 /** A captioned cinematic frame — plays a WAN reel when present, still otherwise. */
 export function Shot({ src, video, caption, col, ar, speed = 0.1, className = '' }: ShotProps) {
   const [reel, setReel] = useState(false)
+  const resolvedSrc = asset(src)
+  const resolvedVideo = video ? asset(video) : undefined
 
   return (
     <div
@@ -27,13 +30,13 @@ export function Shot({ src, video, caption, col, ar, speed = 0.1, className = ''
     >
       <div className="shot__cap u-mono">
         <b>{caption}</b>
-        {video ? <span>{reel ? 'Reel' : 'Still'}</span> : <span>Still</span>}
+        {resolvedVideo ? <span>{reel ? 'Reel' : 'Still'}</span> : <span>Still</span>}
       </div>
       <figure className="reel-host">
-        {video ? (
-          <Reel src={video} poster={src} alt={caption} onState={setReel} />
+        {resolvedVideo ? (
+          <Reel src={resolvedVideo} poster={resolvedSrc} alt={caption} onState={setReel} />
         ) : (
-          <img src={src} alt={caption} loading="lazy" />
+          <img src={resolvedSrc} alt={caption} loading="lazy" />
         )}
       </figure>
     </div>

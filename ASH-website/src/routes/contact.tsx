@@ -8,6 +8,7 @@ import { Arrow, ExternalIcon } from '#/components/Icons'
 import { Words } from '#/components/Words'
 import { LINKS } from '#/data/site'
 import { playChime, playClick } from '#/lib/sound'
+import { asset } from '#/lib/asset'
 
 export const Route = createFileRoute('/contact')({
   component: Contact,
@@ -179,8 +180,8 @@ function Contact() {
           <Reveal>
             <Peel
               className="fade"
-              skin="/img/hero-cap-dark.jpg"
-              under="/img/anon-void.jpg"
+              skin={asset('/img/hero-cap-dark.jpg')}
+              under={asset('/img/anon-void.jpg')}
               alt="Kalos Ash over the anonymous figure"
             />
             <p className="u-mono fade" style={{ marginTop: '0.9rem', opacity: 0.55, textAlign: 'center' }}>

@@ -11,6 +11,7 @@ import { FilmFx } from '#/components/FilmFx'
 import { ThemeSpy } from '#/components/ThemeSpy'
 import { CyberCanvas } from '#/components/CyberCanvas'
 import { AuroraGlow } from '#/components/AuroraGlow'
+import { asset } from '#/lib/asset'
 import { BUILD, LINKS } from '#/data/site'
 import { pageMeta } from '#/lib/meta'
 
@@ -34,8 +35,8 @@ export const Route = createRootRoute({
       { name: 'theme-color', content: '#0b0d08' },
     ],
     links: [
-      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      { rel: 'icon', type: 'image/svg+xml', href: asset('/favicon.svg') },
+      { rel: 'apple-touch-icon', href: asset('/apple-touch-icon.png') },
       { rel: 'stylesheet', href: cssHref },
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
@@ -43,8 +44,8 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap',
       },
-      { rel: 'preload', as: 'image', href: '/img/hero-cap-dark.jpg' },
-      { rel: 'preload', as: 'image', href: '/img/anon-void.jpg' },
+      { rel: 'preload', as: 'image', href: asset('/img/hero-cap-dark.jpg') },
+      { rel: 'preload', as: 'image', href: asset('/img/anon-void.jpg') },
     ],
   }),
   shellComponent: RootDocument,

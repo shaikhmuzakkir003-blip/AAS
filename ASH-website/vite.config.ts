@@ -8,14 +8,22 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
 
+const base = process.env.BASE_PATH || '/'
+
 const config = defineConfig({
+  base,
   resolve: { tsconfigPaths: true },
   plugins: [
     whop({ disableTanstackDevtools: true }),
     devtools(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+      },
+    }),
     viteReact(),
   ],
 })

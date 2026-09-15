@@ -11,6 +11,7 @@ import { Claims } from '#/components/Claims'
 import { ShotLightbox } from '#/components/ShotLightbox'
 import { SHOTS, LINKS } from '#/data/site'
 import { playClick } from '#/lib/sound'
+import { asset } from '#/lib/asset'
 
 export const Route = createFileRoute('/off-clock')({
   component: OffClock,
@@ -49,7 +50,7 @@ function OffClock() {
     <>
       <header className="phero" data-theme="dark">
         <div className="phero__bg">
-          <Reel src="/video/rooftop.mp4" poster="/img/ash-stage.jpg" alt="" />
+          <Reel src={asset('/video/rooftop.mp4')} poster={asset('/img/ash-stage.jpg')} alt="" />
         </div>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
