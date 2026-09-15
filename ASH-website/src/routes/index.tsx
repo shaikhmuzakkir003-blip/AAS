@@ -2,26 +2,32 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Hero } from '#/components/Hero'
 import { Statement } from '#/components/Statement'
 import { Terminal } from '#/components/Terminal'
+import { LuhnSimulator } from '#/components/LuhnSimulator'
 import { Collage } from '#/components/Collage'
-import { Collide } from '#/components/Collide'
-import { HallOfFame } from '#/components/HallOfFame'
+import { FaceSplit } from '#/components/FaceSplit'
 import { Marquee } from '#/components/Marquee'
 import { Reveal } from '#/components/Reveal'
-import { RevealGrid } from '#/components/RevealGrid'
-import { SplitReveal } from '#/components/SplitReveal'
+import { Words } from '#/components/Words'
 import { Topo } from '#/components/Topo'
 import { AshMark } from '#/components/SiteHeader'
-import { Arrow } from '#/components/Collide'
-import { PRAISE, STACK, STATS } from '#/data/site'
+import { Arrow } from '#/components/Icons'
+import { Pillars } from '#/components/Pillars'
+import { StatsBand } from '#/components/StatsBand'
+import { Pipeline } from '#/components/Pipeline'
+import { GateWall } from '#/components/GateWall'
+import { Claims } from '#/components/Claims'
+import { Principles } from '#/components/Principles'
+import { DownloadCTA } from '#/components/DownloadCTA'
+import { STACK, LINKS } from '#/data/site'
 import { pageMeta } from '#/lib/meta'
 
 export const Route = createFileRoute('/')({
   component: Home,
   head: () => ({
     meta: pageMeta({
-      title: 'Ash — developer, builder of Asheo',
+      title: 'ASH — independent engineer, architect of Asheo',
       description:
-        'Nine years of shipped work, 1.2M Asheo installs, and still no face reveal. Hover the model and see who is underneath.',
+        'Asheo: a 2 MB Chromium MV3 extension for testing payment gateways. 41 gateway handlers, 85 integrity-signed files, zero trackers. No face reveal — the work is the face.',
     }),
   }),
 })
@@ -31,160 +37,189 @@ function Home() {
     <>
       <Hero />
 
+      <Marquee
+        big={false}
+        items={[
+          'Two megabytes',
+          '41 gateway handlers',
+          '85 SHA-256-signed files',
+          'Zero telemetry',
+          'Chromium MV3',
+          'Free core',
+          'Loaded unpacked',
+        ]}
+      />
+
       {/* message from ash ------------------------------------------------ */}
-      <section className="sec sec--dark" style={{ position: 'relative', overflow: 'clip' }}>
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
           <Reveal className="crest">
-            <span className="reveal u-lime">
+            <span className="fade" style={{ color: 'var(--lime)' }}>
               <AshMark />
             </span>
-            <SplitReveal as="span" className="u-eyebrow" color="lime">
-              Message from Ash
-            </SplitReveal>
+            <span className="u-eyebrow fade">Message from ASH — verify it yourself</span>
           </Reveal>
           <Terminal />
         </div>
       </section>
 
-      {/* the statement ---------------------------------------------------- */}
-      <section className="sec sec--dark" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-            <SplitReveal as="div" className="crest u-eyebrow" color="lime" style={{ opacity: 0.6 }}>
-              Independent since 2019
-            </SplitReveal>
-          <Statement text="*Shipping* small, breaking nothing, carrying it all on one pair of hands. Defining a *craft* in software on and off the clock." />
-        </div>
-      </section>
-
-      <Collage />
-
-      {/* numbers ---------------------------------------------------------- */}
-      <section className="sec sec--bone">
-        <div className="wrap">
-          <RevealGrid className="stats" color="lime">
-            {STATS.map((s) => (
-              <div className="stats__item" key={s.label}>
-                <b>{s.value}</b>
-                <span className="u-mono">{s.label}</span>
-              </div>
-            ))}
-          </RevealGrid>
-        </div>
-      </section>
-
-      <Collide />
-
-      {/* hall of fame ------------------------------------------------------ */}
-      <section className="sec sec--dark" style={{ position: 'relative', overflow: 'clip' }}>
+      {/* interactive test bench ------------------------------------------ */}
+      <section id="test-bench" className="sec sec--void" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
-          <Reveal>
-            <SplitReveal as="h2" className="u-display" color="lime" style={{ fontSize: 'clamp(2.4rem, 8vw, 8rem)' }}>
-                Builds
-                <br />
-                <span className="u-serif u-lime">Hall of fame</span>
-              </SplitReveal>
-            <SplitReveal
-              as="p"
-              className="u-body"
-              color="lime"
-              style={{ maxWidth: '46ch', marginTop: '1.4rem', opacity: 0.72 }}
-            >
-              From a one file fix for an annoying tab to an extension a million
-              people open every morning, Ash has never shipped a build he would not
-              put his name on.
-            </SplitReveal>
-          </Reveal>
-
-          <HallOfFame />
-
-          <Reveal className="crest" delay={0.1}>
-            <p className="u-body reveal" style={{ marginBottom: 0, opacity: 0.72 }}>
-              See the whole shelf, releases and all
-            </p>
-            <Link to="/in-prod" className="btn-line btn-line--light reveal" data-cursor="Open">
-              <span>View in prod</span>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* praise ------------------------------------------------------------ */}
-      <section className="sec sec--bone">
-        <div className="wrap">
-          <Reveal>
-            <SplitReveal
-              as="h2"
-              className="u-display"
-              color="olive"
-              style={{ fontSize: 'clamp(2.2rem, 7vw, 6.5rem)', marginBottom: '0.6rem' }}
-            >
-              What they
-              <span className="u-serif" style={{ color: 'var(--olive)' }}>
-                {' '}
-                say
+          <Reveal className="sec__head">
+            <div>
+              <span className="u-eyebrow fade" style={{ color: 'var(--lime)', display: 'block', marginBottom: '0.6rem' }}>
+                Interactive Bench · Real Luhn Engine
               </span>
-            </SplitReveal>
-            <SplitReveal as="p" className="u-body" color="olive" style={{ maxWidth: '44ch', opacity: 0.7 }}>
-              Eighteen thousand reviews, a support inbox he answers himself, and the
-              same line coming back over and over: it just works.
-            </SplitReveal>
+              <h2 className="u-display sec__title fade">
+                Test the <span className="u-serif u-lime">engine</span> live
+              </h2>
+            </div>
+            <span className="sec__index u-mono fade">Exhibit I — in-browser swap</span>
           </Reveal>
-
-          <Reveal className="praise" stagger={0.07} delay={0.05}>
-            {PRAISE.map((p) => (
-              <blockquote className="praise__card reveal" key={p.by}>
-                <div className="stars" aria-hidden="true">
-                  ★★★★★
-                </div>
-                <p>{p.quote}</p>
-                <footer className="praise__by u-mono">{p.by}</footer>
-              </blockquote>
-            ))}
+          <Reveal>
+            <LuhnSimulator />
           </Reveal>
         </div>
       </section>
 
-      {/* asheo cta --------------------------------------------------------- */}
-      <section className="sec cta">
+      {/* statement -------------------------------------------------------- */}
+      <section className="sec sec--dark" data-theme="dark" style={{ paddingTop: 0 }}>
         <div className="wrap">
-          <Reveal className="cta__inner" stagger={0.06}>
-            <span className="u-eyebrow reveal">The flagship</span>
-            <h2
-              className="u-display reveal"
-              style={{ fontSize: 'clamp(3rem, 12vw, 12rem)', lineHeight: 0.82 }}
-            >
-              Asheo
+          <Reveal className="crest">
+            <span className="u-eyebrow fade" style={{ opacity: 0.55 }}>
+              One engineer · no team · no funding
+            </span>
+          </Reveal>
+          <Statement text="Shipped *small*. Break *nothing*. Let the build do the *talking*." />
+        </div>
+      </section>
+
+      {/* four pillars ------------------------------------------------------ */}
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
+        <Topo className="u-lime" />
+        <div className="wrap" style={{ position: 'relative' }}>
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              The <span className="u-serif u-lime">kit</span>
             </h2>
-            <p className="u-body reveal" style={{ maxWidth: '48ch', margin: 0 }}>
-              The extension that made his name. Local first, keyboard driven, under
-              sixteen milliseconds to anything. Free, and quietly the best thing in
-              your browser.
-            </p>
-            <Link to="/asheo" className="btn-line btn-line--dark reveal" data-cursor="Install">
-              <span>Get Asheo</span>
+            <span className="sec__index u-mono fade">Exhibit II — four pillars</span>
+          </Reveal>
+          <Pillars />
+        </div>
+      </section>
+
+      {/* real counters ----------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light" style={{ paddingBlock: 'clamp(3rem,6vw,6rem)' }}>
+        <div className="wrap">
+          <StatsBand />
+        </div>
+      </section>
+
+      {/* split doors ------------------------------------------------------- */}
+      <FaceSplit />
+
+      {/* pipeline ---------------------------------------------------------- */}
+      <section className="sec sec--void" data-theme="dark" style={{ overflow: 'clip' }}>
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Under the <span className="u-serif u-lime">hood</span>
+            </h2>
+            <span className="sec__index u-mono fade">One request, eight real files</span>
+          </Reveal>
+          <Pipeline />
+          <Reveal className="crest">
+            <Link className="btn btn--ghost fade" to="/in-prod" data-cursor="Open">
+              <span>Open the full module index</span>
               <Arrow />
             </Link>
           </Reveal>
         </div>
       </section>
 
-      {/* stack marquee ------------------------------------------------------ */}
-      <section className="sec sec--ink" style={{ paddingInline: 0 }}>
-        <div className="wrap" style={{ marginBottom: 'clamp(1.5rem, 3vw, 3rem)' }}>
+      {/* gateways ---------------------------------------------------------- */}
+      <section className="sec sec--void" data-theme="dark" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <GateWall />
+        </div>
+      </section>
+
+      {/* cinematic b-roll -------------------------------------------------- */}
+      <Collage />
+
+      {/* engineering claims ------------------------------------------------ */}
+      <section className="sec sec--dark" data-theme="dark">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Why it reads <span className="u-serif u-lime">expensive</span>
+            </h2>
+            <span className="sec__index u-mono fade">Evidence, not adjectives</span>
+          </Reveal>
+          <Claims />
+        </div>
+      </section>
+
+      {/* on-the-record lines ------------------------------------------------ */}
+      <section className="sec sec--bone" data-theme="light">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              On the <span className="u-serif">record</span>
+            </h2>
+            <span className="sec__index u-mono fade">Verbatim from docs &amp; build copy</span>
+          </Reveal>
+          <Principles />
+        </div>
+      </section>
+
+      {/* download ----------------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Ready to <span className="u-serif">go OG?</span>
+            </h2>
+            <span className="sec__index u-mono fade">Access — Exhibit V</span>
+          </Reveal>
+          <DownloadCTA />
+        </div>
+      </section>
+
+      {/* cta ---------------------------------------------------------------- */}
+      <section className="sec cta" data-theme="light">
+        <div className="wrap cta__inner">
+          <span className="u-eyebrow fade">The flagship · Edition 01</span>
+          <h2 className="u-display cta__big fade">
+            <Words text="Install once. *Forget* it's there." step={22} />
+          </h2>
+          <a
+            className="btn btn--ink fade"
+            href={LINKS.download}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="Install"
+          >
+            <span>Get Asheo — free</span>
+            <Arrow />
+          </a>
+        </div>
+      </section>
+
+      {/* stack --------------------------------------------------------------- */}
+      <section className="stacksec" data-theme="dark" style={{ paddingInline: 0 }}>
+        <div className="wrap" style={{ marginBottom: 'clamp(1.5rem,3vw,3rem)' }}>
           <Reveal>
-            <h2
-              className="u-display reveal"
-              style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}
-            >
-              The stack he
-              <span className="u-serif u-lime"> trusts</span>
+            <h2 className="u-display fade" style={{ fontSize: 'clamp(2rem,6vw,5rem)' }}>
+              What it’s <span className="u-serif u-lime">actually</span> built from
             </h2>
           </Reveal>
         </div>
-        <Marquee items={STACK} big />
-        <Marquee items={[...STACK].reverse()} reverse />
+        <Marquee items={STACK} big className="ticker--void" />
+        <Marquee items={[...STACK].reverse()} reverse className="ticker--void" />
       </section>
     </>
   )

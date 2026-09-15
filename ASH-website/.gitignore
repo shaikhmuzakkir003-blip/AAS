@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.wrangler/
+.vinxi/
+.DS_Store
+*.log
+
+# raw WAN renders land here; transcoded clips live in public/video/
+public/video/_src/

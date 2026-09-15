@@ -1,87 +1,157 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Reveal } from '#/components/Reveal'
-import { SplitReveal } from '#/components/SplitReveal'
+import { Words } from '#/components/Words'
 import { Topo } from '#/components/Topo'
-import { Unwrap } from '#/components/Unwrap'
+import { Peel } from '#/components/Peel'
 import { Marquee } from '#/components/Marquee'
-import { Arrow } from '#/components/Collide'
-import { Statement } from '#/components/Statement'
-import { ASHEO_FEATURES, STATS } from '#/data/site'
+import { Arrow } from '#/components/Icons'
+import { StatsBand } from '#/components/StatsBand'
+import { GateWall } from '#/components/GateWall'
+import { Ledger } from '#/components/Ledger'
+import { Steps } from '#/components/Steps'
+import { DownloadCTA } from '#/components/DownloadCTA'
+import { LuhnSimulator } from '#/components/LuhnSimulator'
+import { LINKS } from '#/data/site'
 import { pageMeta } from '#/lib/meta'
+import { asset } from '#/lib/asset'
 
 export const Route = createFileRoute('/asheo')({
   component: Asheo,
   head: () => ({
     meta: pageMeta({
-      title: 'Asheo — the extension Ash built',
+      title: 'Asheo — the build ASH engineered',
       description:
-        '1.2M installs, 4.9 stars, 312 releases. Local first, keyboard driven, instant.',
+        'A 2 MB Chromium MV3 developer & QA tool for payment-gateway testing. 41 gateway handlers, 85 signed files, local card generation, zero telemetry.',
     }),
   }),
 })
 
+const FEATURES = [
+  {
+    n: '01',
+    title: 'BIN engine',
+    body: 'Generate algorithmically valid test numbers from a pattern like 424242xxxxxxxxxx, optionally pinning MM and YYYY. Every output satisfies Luhn and network length rules — a rejection is the gateway talking, not malformed data.',
+  },
+  {
+    n: '02',
+    title: 'Gateway detector',
+    body: 'A live badge on any checkout it recognises, driven partly by real network signals rather than URL guesses — it says when a swap will actually fire.',
+  },
+  {
+    n: '03',
+    title: 'v3 request pipeline',
+    body: 'declarativeNetRequest and webRequest interceptors, a gateway registry, request transformers and response hooks — ordered stages, per-gateway routing.',
+  },
+  {
+    n: '04',
+    title: 'Local by architecture',
+    body: 'Generation runs entirely in the browser. Generated cards, BINs, gateway URLs and intercepted request bodies never leave the device.',
+  },
+  {
+    n: '05',
+    title: 'Signed manifest',
+    body: '85 files, each pinned with a SHA-256 in build-hashes.json alongside build-hashes.sig. The extension verifies itself at startup; a tampered or superseded build refuses to run.',
+  },
+  {
+    n: '06',
+    title: 'Keyboard first',
+    body: 'An omnibox keyword — type “asheo”, drive the flow. Popup UI set in IBM Plex and JetBrains Mono, no mouse required.',
+  },
+]
+
 function Asheo() {
   return (
     <>
-      <header className="phero">
+      <header className="phero phero--void" data-theme="dark">
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
           <Reveal>
-            <SplitReveal as="span" className="u-eyebrow" color="lime" style={{ color: 'var(--lime)' }}>
-              The flagship · v3.0
-            </SplitReveal>
-            <SplitReveal as="h1" className="u-display" color="lime" style={{ marginTop: '1rem', fontSize: 'clamp(3rem, 13vw, 13rem)' }}>
-              Asheo
+            <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+              The flagship · Edition 01
+            </span>
+            <h1 className="fade" style={{ marginTop: '1.2rem' }}>
+              <Words text="Asheo" step={40} />
               <br />
-              <em>by Ash</em>
-            </SplitReveal>
-            <p
-              className="u-body reveal"
-              style={{ maxWidth: '52ch', marginTop: '1.6rem', opacity: 0.75 }}
-            >
-              One developer, one extension, a million and a bit browsers. Asheo does
-              the small thing you do forty times a day and gets out of the way.
+              <em>by ASH</em>
+            </h1>
+            <p className="u-body fade" style={{ maxWidth: '56ch', marginTop: '1.6rem', opacity: 0.75 }}>
+              A developer &amp; QA tool for payment integrations. It generates
+              algorithmically valid test cards from a BIN spec and substitutes them
+              into outbound payment requests — so you can exercise a real checkout
+              end to end without hand-entering card data.
             </p>
-            <a
-              className="btn-line btn-line--light reveal"
-              href="https://chromewebstore.google.com"
-              target="_blank"
-              rel="noreferrer"
-              data-cursor="Install"
-              style={{ marginTop: '1.8rem' }}
-              onClick={() =>
-                window.whop?.track('view_content', { item: 'asheo_install' })
-              }
-            >
-              <span>Add to browser</span>
-              <Arrow />
-            </a>
+            <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginTop: '2rem' }}>
+              <a
+                className="btn btn--lime fade"
+                href={LINKS.download}
+                target="_blank"
+                rel="noreferrer"
+                data-cursor="Install"
+              >
+                <span>Download — free core</span>
+                <Arrow />
+              </a>
+              <a
+                className="btn btn--ghost fade"
+                href={LINKS.docs}
+                target="_blank"
+                rel="noreferrer"
+                data-cursor="Read"
+              >
+                <span>Read the docs</span>
+              </a>
+            </div>
           </Reveal>
         </div>
       </header>
 
       <Marquee
-        items={['1.2M installs', '4.9★ rating', '312 releases', 'Local first', 'Free']}
         big
+        items={['41 handlers', '85 signed files', '2.0 MB', 'MV3', 'Zero telemetry', 'Free core']}
       />
 
-      <section className="sec sec--bone">
+      {/* interactive simulator -------------------------------------------- */}
+      <section className="sec sec--dark" data-theme="dark" style={{ position: 'relative', overflow: 'clip' }}>
+        <Topo className="u-lime" />
+        <div className="wrap" style={{ position: 'relative' }}>
+          <Reveal className="sec__head">
+            <div>
+              <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+                Core Capability · Live Sandbox
+              </span>
+              <h2 className="u-display sec__title fade">
+                Live <span className="u-serif u-lime">BIN engine</span> test
+              </h2>
+            </div>
+            <span className="sec__index u-mono fade">Interactive Module</span>
+          </Reveal>
+          <Reveal>
+            <LuhnSimulator />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* features ---------------------------------------------------------- */}
+      <section className="sec sec--void" data-theme="dark">
         <div className="wrap split-2">
           <Reveal>
-            <SplitReveal as="h2" className="u-display" color="olive" style={{ fontSize: 'clamp(2rem, 5.5vw, 4.5rem)' }}>
-              Built the
-              <span className="u-serif"> stubborn</span> way
-            </SplitReveal>
-            <p className="u-body reveal" style={{ opacity: 0.7, marginTop: '1rem' }}>
-              No growth team, no telemetry dashboard, no roadmap written by committee.
-              Ash reads every review, fixes the thing, ships it, and writes the
-              changelog himself.
+            <h2 className="u-display fade" style={{ fontSize: 'clamp(2.2rem,5.6vw,5rem)' }}>
+              Built the <span className="u-serif u-lime">stubborn</span> way
+            </h2>
+            <p className="u-body fade" style={{ opacity: 0.7, marginTop: '1.2rem' }}>
+              No growth team, no telemetry dashboard, no roadmap by committee. The
+              docs read like an engineering notebook because the build was written
+              like one — every gateway has its own matcher, transform and validation
+              path.
+            </p>
+            <p className="u-mono fade" style={{ marginTop: '1.6rem', opacity: 0.55 }}>
+              Manifest V3 · minimum Chrome 116 · one build for every Chromium engine
             </p>
           </Reveal>
 
           <Reveal as="ul" className="feature-list" stagger={0.06}>
-            {ASHEO_FEATURES.map((f) => (
-              <li className="reveal" key={f.n}>
+            {FEATURES.map((f) => (
+              <li className="fade" key={f.n}>
                 <span className="u-mono">{f.n}</span>
                 <div>
                   <b>{f.title}</b>
@@ -93,53 +163,115 @@ function Asheo() {
         </div>
       </section>
 
-      <section className="sec sec--dark" style={{ position: 'relative', overflow: 'clip' }}>
-        <Topo className="u-lime" />
-        <div className="wrap split-2" style={{ position: 'relative', alignItems: 'center' }}>
-          <Reveal>
-            <Unwrap
-              className="reveal"
-              skin="/img/ash-model.png"
-              under="/img/ash-anon.png"
-              alt="Ash as his character model"
-            />
+      {/* product + ledger --------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light">
+        <div className="wrap split-2" style={{ alignItems: 'center' }}>
+          <Reveal className="popup-mock fade">
+            <img src={asset('/img/ui-popup.png')} alt="The Asheo extension popup: BIN field, gateway checks and active toggle" />
           </Reveal>
-          <Reveal>
-            <SplitReveal as="span" className="u-eyebrow" color="lime">The person behind it</SplitReveal>
-            <SplitReveal
-              as="h2"
-              className="u-display"
-              color="lime"
-              style={{ fontSize: 'clamp(2rem, 5vw, 4.2rem)', marginTop: '1rem' }}
-            >
-              Still no
-              <span className="u-serif u-lime"> face reveal</span>
-            </SplitReveal>
-            <p className="u-body reveal" style={{ opacity: 0.75, marginTop: '1rem' }}>
-              Hover him. The model comes apart and there is nobody underneath, which
-              is exactly how Ash likes it. He would rather you judged the release
-              notes.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="sec sec--bone">
-        <div className="wrap">
-          <div className="stats">
-            {STATS.map((s) => (
-              <div className="stats__item" key={s.label}>
-                <b>{s.value}</b>
-                <span className="u-mono">{s.label}</span>
-              </div>
-            ))}
+          <div>
+            <Reveal className="sec__head">
+              <h2 className="u-display fade" style={{ fontSize: 'clamp(2rem,5vw,4.4rem)' }}>
+                The <span className="u-serif">ledger</span>
+              </h2>
+            </Reveal>
+            <Ledger />
           </div>
         </div>
       </section>
 
-      <section className="sec cta">
+      {/* gateways ----------------------------------------------------------- */}
+      <section className="sec sec--void" data-theme="dark" style={{ paddingBlock: 'clamp(4rem,8vw,8rem)' }}>
         <div className="wrap">
-          <Statement text="Install it once. *Forget* you installed it. That is the whole *pitch*." />
+          <GateWall />
+        </div>
+      </section>
+
+      {/* method ------------------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light">
+        <div className="wrap">
+          <Reveal className="sec__head">
+            <h2 className="u-display sec__title fade">
+              Three steps. <span className="u-serif">Twenty seconds.</span>
+            </h2>
+            <span className="sec__index u-mono fade">Exhibit III — the method</span>
+          </Reveal>
+          <Steps />
+        </div>
+      </section>
+
+      {/* stats -------------------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <StatsBand />
+        </div>
+      </section>
+
+      {/* the person --------------------------------------------------------- */}
+      <section className="sec sec--void" data-theme="dark">
+        <div className="wrap split-2" style={{ alignItems: 'center' }}>
+          <Reveal>
+            <Peel
+              className="fade"
+              skin={asset('/img/ash-model.png')}
+              under={asset('/img/anon-void.jpg')}
+              alt="Kalos Ash over the anonymous figure"
+            />
+            <p className="u-mono fade" style={{ marginTop: '0.8rem', opacity: 0.55 }}>
+              Move over the plate — the character peels, the architect stays hidden.
+            </p>
+          </Reveal>
+          <Reveal>
+            <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+              The person behind it
+            </span>
+            <h2 className="u-display fade" style={{ fontSize: 'clamp(2rem,5vw,4.2rem)', marginTop: '1rem' }}>
+              Still no <span className="u-serif u-lime">face reveal</span>
+            </h2>
+            <p className="u-body fade" style={{ opacity: 0.75, marginTop: '1.2rem' }}>
+              The mascot is Kalos Ash. The engineer behind the keyboard has never
+              shown his face. You can verify every line, hash and permission
+              instead — the repository is public, the manifest is signed, and the
+              network disclosure names the only two things the build phones home
+              for.
+            </p>
+            <a
+              className="btn btn--ghost fade"
+              href={LINKS.githubTree}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="Open"
+              style={{ marginTop: '1.6rem' }}
+            >
+              <span>Read the source on GitHub</span>
+              <Arrow />
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* download ----------------------------------------------------------- */}
+      <section className="sec sec--bone" data-theme="light" style={{ paddingBottom: 0 }}>
+        <div className="wrap">
+          <DownloadCTA />
+        </div>
+      </section>
+
+      <section className="sec cta" data-theme="light">
+        <div className="wrap cta__inner">
+          <h2 className="u-display cta__big fade">
+            <Words text="Two megabytes that *earn* their place." step={22} />
+          </h2>
+          <a
+            className="btn btn--ink fade"
+            href={LINKS.download}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="Install"
+          >
+            <span>Get Asheo</span>
+            <Arrow />
+          </a>
         </div>
       </section>
     </>

@@ -1,79 +1,89 @@
 import { useEffect } from 'react'
 import type { RefObject } from 'react'
 
-type Watcher = { el: HTMLElement; show: () => void }
-
-const watchers = new Set<Watcher>()
-let running = false
-
-/** One rAF-throttled pass over everything waiting to be revealed. */
-function pass() {
-  running = false
-  const h = window.innerHeight
-  for (const w of watchers) {
-    const r = w.el.getBoundingClientRect()
-    if (r.top < h * 0.92 && r.bottom > 0) {
-      w.show()
-      watchers.delete(w)
-    }
-  }
-}
-
-function schedule() {
-  if (running) return
-  running = true
-  requestAnimationFrame(pass)
-}
-
-function listen() {
-  window.addEventListener('scroll', schedule, { passive: true })
-  window.addEventListener('resize', schedule)
-}
-
-let listening = false
-
 /**
- * Reveals on scroll position rather than through IntersectionObserver, so a
- * section still appears in environments where the observer never fires.
- * Children carrying `.reveal` are staggered in order.
+ * IntersectionObserver-based reveal. Anything inside `ref` carrying
+ * `.fade` rises in (staggered by DOM order); containers get `.is-in`,
+ * which drives the CSS `.word > i` mask reveal.
  */
-export function useReveal(
-  ref: RefObject<HTMLElement | null>,
-  { stagger = 0.08, delay = 0 } = {},
+export function useInView<T extends HTMLElement>(
+  ref: RefObject<T | null>,
+  { stagger = 0.05, delay = 0, threshold = 0.02 } = {},
 ) {
   useEffect(() => {
     const node = ref.current
     if (!node) return
 
-    const found = node.querySelectorAll<HTMLElement>('.reveal')
-    const targets = found.length ? Array.from(found) : [node]
-    targets.forEach((el, i) => {
+    if (document.documentElement.classList.contains('reduce-motion')) {
+      node.classList.add('is-in')
+      node.querySelectorAll('.fade').forEach((el) => el.classList.add('is-in'))
+      return
+    }
+
+    const fades = Array.from(node.querySelectorAll<HTMLElement>('.fade'))
+    fades.forEach((el, i) => {
       el.style.transitionDelay = `${delay + i * stagger}s`
     })
+    // word stagger index fallback for words that did not set their own --i
+    node.querySelectorAll<HTMLElement>('.word').forEach((el, i) => {
+      if (!el.style.getPropertyValue('--i')) el.style.setProperty('--i', String(i % 24))
+    })
 
-    const watcher: Watcher = {
-      el: node,
-      show: () => targets.forEach((el) => el.classList.add('is-in')),
+    const reveal = () => {
+      node.classList.add('is-in')
+      fades.forEach((el) => el.classList.add('is-in'))
     }
-    watchers.add(watcher)
 
-    if (!listening) {
-      listening = true
-      listen()
-    }
-    schedule()
-    // catch late layout shifts from fonts and images
-    const settle = window.setTimeout(schedule, 600)
-    // and never leave anything hidden, whatever the environment does with scroll
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            reveal()
+            io.disconnect()
+          }
+        }
+      },
+      { threshold, rootMargin: '120px 0px 80px 0px' },
+    )
+    io.observe(node)
+
+    // safety: never leave content hidden if observer delays
     const safety = window.setTimeout(() => {
-      watcher.show()
-      watchers.delete(watcher)
-    }, 4000)
+      reveal()
+      io.disconnect()
+    }, 1200)
 
     return () => {
-      watchers.delete(watcher)
-      window.clearTimeout(settle)
       window.clearTimeout(safety)
+      io.disconnect()
     }
-  }, [ref, stagger, delay])
+  }, [ref, stagger, delay, threshold])
+}
+
+/** Fires a callback once, the first time an element scrolls into view. */
+export function useWhenInView<T extends HTMLElement>(
+  ref: RefObject<T | null>,
+  cb: () => void,
+  { threshold = 0.4 } = {},
+) {
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return
+    let fired = false
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !fired) {
+            fired = true
+            cb()
+            io.disconnect()
+          }
+        }
+      },
+      { threshold },
+    )
+    io.observe(node)
+    return () => io.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref])
 }
