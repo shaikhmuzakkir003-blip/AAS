@@ -1,144 +1,127 @@
 import { useEffect, useRef } from 'react'
 import { gsap, ScrollTrigger, reducedMotion } from '#/lib/motion'
 import { Topo } from './Topo'
+import { TidalBg } from './TidalBg'
+import { HeadsetRig } from './HeadsetRig'
 
 /**
- * The masthead. Ash's model sits on top of a faceless black figure: scrolling
- * unwraps the model from the top down, and the pointer opens a hole in it
- * wherever it goes.
+ * The masthead — the Lando recipe: a light off-white stage with drifting
+ * contour waves, the lit face, the black VR wireframe shell wrapping around
+ * his head. No giant wordmark over the face. No copy. Just Ash.
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null)
-  const stage = useRef<HTMLDivElement>(null)
-  const skin = useRef<HTMLImageElement>(null)
-  const anon = useRef<HTMLImageElement>(null)
-  const scan = useRef<HTMLDivElement>(null)
-  const word = useRef<HTMLHeadingElement>(null)
-  const card = useRef<HTMLDivElement>(null)
-  const hint = useRef<HTMLDivElement>(null)
+  const scene = useRef<HTMLDivElement>(null)
+  const figPar = useRef<HTMLDivElement>(null)
+  const figure = useRef<HTMLDivElement>(null)
+  const veil = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
-    const skinEl = skin.current
-    const anonEl = anon.current
-    if (!section.current || !skinEl || !anonEl) return
+    const sec = section.current
+    const scn = scene.current
+    if (!sec || !scn) return
 
+    const reduce = reducedMotion()
+
+    // ---- fluid pointer: 3D lean ----
+    const target = { rx: 0, ry: 0, px: 0, py: 0 }
+    const cur = { rx: 0, ry: 0, px: 0, py: 0 }
+
+    const onMove = (e: PointerEvent) => {
+      const r = scn.getBoundingClientRect()
+      const nx = ((e.clientX - r.left) / r.width) * 2 - 1
+      const ny = ((e.clientY - r.top) / r.height) * 2 - 1
+      target.ry = nx * 7
+      target.rx = -ny * 6
+      target.px = nx
+      target.py = ny
+    }
+
+    let raf = 0
+    const tick = () => {
+      cur.rx += (target.rx - cur.rx) * 0.08
+      cur.ry += (target.ry - cur.ry) * 0.08
+      cur.px += (target.px - cur.px) * 0.07
+      cur.py += (target.py - cur.py) * 0.07
+      scn.style.transform = `perspective(1100px) rotateX(${cur.rx}deg) rotateY(${cur.ry}deg)`
+      if (figPar.current)
+        figPar.current.style.transform = `translate3d(${cur.px * -8}px, ${cur.py * -6}px, 0)`
+      raf = requestAnimationFrame(tick)
+    }
+
+    // ---- intro ----
+    const intro = () => {
+      if (reduce) return
+      gsap
+        .timeline({ defaults: { ease: 'expo.out' } })
+        .from(figure.current, { scale: 1.16, autoAlpha: 0, duration: 1.6 }, 0)
+    }
+    const start = () => {
+      intro()
+      window.removeEventListener('ash:preloaded', start)
+    }
+    window.addEventListener('ash:preloaded', start)
+    const fallback = window.setTimeout(start, 3000)
+
+    // ---- scroll: materialise ----
     const ctx = gsap.context(() => {
-      // intro
-      gsap.from([word.current, card.current, hint.current], {
-        yPercent: 18,
-        opacity: 0,
-        duration: 1.3,
-        ease: 'expo.out',
-        stagger: 0.08,
-        delay: 0.15,
-      })
+      if (reduce) return
 
-      if (reducedMotion()) return
-
-      // scroll drives the unwrap: 0% (Ash's model) -> 120% (the figure beneath)
-      const st = ScrollTrigger.create({
-        trigger: section.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.6,
-        onUpdate: (self) => {
-          const p = self.progress
-          const wipe = p * 124
-          skinEl.style.setProperty('--wipe', `${wipe}%`)
-          skinEl.style.setProperty('--zoom', `${1.06 + p * 0.1}`)
-          anonEl.style.setProperty('--zoom', `${1.06 + p * 0.1}`)
-          if (scan.current) {
-            scan.current.style.setProperty('--wipe', `${wipe}%`)
-            scan.current.style.setProperty(
-              '--scan',
-              `${p > 0.01 && p < 0.99 ? 1 : 0}`,
-            )
-          }
-          if (word.current) {
-            word.current.style.opacity = `${1 - Math.max(0, p - 0.55) * 2.6}`
-            word.current.style.transform = `translate(-50%, ${p * 28}%)`
-          }
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sec,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.7,
         },
       })
 
-      // pointer opens a hole in the model
-      const onMove = (e: PointerEvent) => {
-        const r = stage.current!.getBoundingClientRect()
-        skinEl.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`)
-        skinEl.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`)
-      }
-      let hole = 0
-      let want = 0
-      const tick = () => {
-        hole += (want - hole) * 0.1
-        skinEl.style.setProperty('--hole', `${hole.toFixed(2)}px`)
-      }
-      gsap.ticker.add(tick)
-      const enter = () => (want = 230)
-      const leave = () => (want = 0)
-      const host = stage.current!
-      host.addEventListener('pointermove', onMove)
-      host.addEventListener('pointerenter', enter)
-      host.addEventListener('pointerleave', leave)
+      tl.to(figure.current, { scale: 1.16, ease: 'none', duration: 1 }, 0)
+      // lime veil sweep at the materialise moment
+      tl.fromTo(
+        veil.current,
+        { yPercent: 101 },
+        { yPercent: -101, ease: 'none', duration: 0.3 },
+        0.4,
+      )
+    }, sec)
 
-      return () => {
-        st.kill()
-        gsap.ticker.remove(tick)
-        host.removeEventListener('pointermove', onMove)
-        host.removeEventListener('pointerenter', enter)
-        host.removeEventListener('pointerleave', leave)
-      }
-    }, section)
+    if (!reduce) {
+      scn.addEventListener('pointermove', onMove)
+      raf = requestAnimationFrame(tick)
+    }
 
-    return () => ctx.revert()
+    return () => {
+      window.clearTimeout(fallback)
+      window.removeEventListener('ash:preloaded', start)
+      cancelAnimationFrame(raf)
+      scn.removeEventListener('pointermove', onMove)
+      ctx.revert()
+    }
   }, [])
 
   return (
-    <section className="hero" ref={section}>
+    <section className="hero hero--crazy hero--light" data-theme="light" ref={section}>
       <div className="hero__sticky">
-        <Topo className="u-lime" />
+        <TidalBg />
+        <Topo />
 
-        <div className="hero__stage" ref={stage} data-cursor="Unwrap">
-          <img
-            className="hero__layer hero__layer--anon"
-            src="/img/ash-anon.png"
-            alt=""
-            aria-hidden="true"
-            ref={anon}
-          />
-          <img
-            className="hero__layer hero__layer--skin"
-            src="/img/ash-model.png"
-            alt="Ash, rendered as his own character model"
-            ref={skin}
-            style={{ ['--wipe' as string]: '0%' }}
-            fetchPriority="high"
-          />
-          <div className="hero__scan" ref={scan} />
-          <div className="hero__fade" />
+        <div className="hero__scene" ref={scene}>
+          <div className="hero__par" ref={figPar}>
+            <div className="hero__figure" ref={figure}>
+              <HeadsetRig base="/img/ash-straight-bare.png" />
+            </div>
+          </div>
         </div>
 
-        <h1 className="hero__wordmark" ref={word}>
-          ASH
-        </h1>
-        <p className="hero__sub u-eyebrow">
-          Independent developer · Creator of Asheo · No face reveal
-        </p>
-
-        <div className="hero__card" ref={card}>
-          <span className="u-mono">Now shipping</span>
-          <h3>
-            Asheo
-            <br />
-            v3.0
-          </h3>
-          <p>1.2M installs · 4.9★</p>
+        <div className="hero__veil" ref={veil}>
+          <i />
         </div>
 
-        <div className="hero__hint u-mono" ref={hint}>
-          <b>Move the pointer</b>
-          <span>Unwrap the model. Nobody has seen the face behind it.</span>
+        <div className="hero__hud u-mono">
+          <span className="hud__l">VR / DEV / SHIPS</span>
+          <span className="hud__r">SCROLL TO MATERIALISE</span>
         </div>
       </div>
     </section>

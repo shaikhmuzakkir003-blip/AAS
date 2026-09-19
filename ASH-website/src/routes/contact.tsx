@@ -1,157 +1,130 @@
-import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { pageMeta } from '#/lib/meta'
 import { Reveal } from '#/components/Reveal'
-import { SplitReveal } from '#/components/SplitReveal'
 import { Topo } from '#/components/Topo'
-import { Unwrap } from '#/components/Unwrap'
-import { Arrow } from '#/components/Collide'
-import { SOCIALS } from '#/data/site'
+import { Peel } from '#/components/Peel'
+import { Arrow, ExternalIcon } from '#/components/Icons'
+import { Words } from '#/components/Words'
+import { LINKS } from '#/data/site'
 
 export const Route = createFileRoute('/contact')({
   component: Contact,
   head: () => ({
     meta: pageMeta({
-      title: 'Contact Ash',
+      title: 'Contact ASH',
       description:
-        'One inbox, answered by the person who wrote the code.',
+        'One inbox, answered by the person who wrote the code. Keys and support on Telegram @moreash; authorise an install with @AsheoPremiumBot.',
     }),
   }),
 })
 
+const CHANNELS = [
+  {
+    name: 'Telegram — @moreash',
+    note: 'Keys & support · bugs looked at here',
+    href: LINKS.telegram,
+  },
+  {
+    name: '@AsheoPremiumBot',
+    note: 'Authorise a Premium install',
+    href: LINKS.premiumBot,
+  },
+  {
+    name: 'GitHub',
+    note: 'The whole build, hashes and all',
+    href: LINKS.github,
+  },
+  {
+    name: 'asheobypasser.net',
+    note: 'Official site, docs & tutorials',
+    href: LINKS.site,
+  },
+]
+
 function Contact() {
-  const [sent, setSent] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', note: '' })
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.email.includes('@')) return
-    window.whop?.track('identify', { email: form.email })
-    window.whop?.track('contact', { source: 'contact_page' })
-    setSent(true)
-  }
-
   return (
     <>
-      <header className="phero">
+      <header className="phero" data-theme="dark">
         <Topo className="u-lime" />
         <div className="wrap" style={{ position: 'relative' }}>
           <Reveal>
-            <SplitReveal as="span" className="u-eyebrow" color="lime">One inbox, no assistant</SplitReveal>
-            <SplitReveal as="h1" className="u-display" color="lime" style={{ marginTop: '1rem', fontSize: 'clamp(3rem, 13vw, 13rem)' }}>
+            <span className="u-eyebrow fade" style={{ color: 'var(--lime)' }}>
+              One inbox · no assistant
+            </span>
+            <h1 className="fade" style={{ marginTop: '1.1rem' }}>
               Talk to
               <br />
-              <em>Ash</em>
-            </SplitReveal>
+              <em>ASH</em>
+            </h1>
           </Reveal>
         </div>
       </header>
 
-      <section className="sec sec--bone">
+      <section className="sec sec--bone" data-theme="light">
         <div className="wrap split-2" style={{ alignItems: 'center' }}>
           <Reveal>
-            <SplitReveal as="h2" className="u-display" color="olive" style={{ fontSize: 'clamp(1.8rem, 4.4vw, 3.4rem)' }}>
-              Bug, idea or
-              <span className="u-serif"> job</span>
-            </SplitReveal>
-            <p className="u-body reveal" style={{ opacity: 0.7, marginTop: '1rem' }}>
-              Asheo bug reports get looked at the same day. Everything else gets a
-              real answer within the week, written by him.
+            <h2 className="u-display fade" style={{ fontSize: 'clamp(1.9rem,4.4vw,3.6rem)' }}>
+              Bug, BIN or <span className="u-serif">build question</span>
+            </h2>
+            <p className="u-body fade" style={{ opacity: 0.72, marginTop: '1.2rem' }}>
+              Asheo bug reports get looked at first. Premium keys and install
+              authorisation run through the bot below — both are ASH, not a support
+              desk.
             </p>
 
-            {sent ? (
-              <p
-                className="u-body reveal"
-                style={{ marginTop: '2rem', fontWeight: 700 }}
-              >
-                Sent. Ash has it, and he replies to everything.
-              </p>
-            ) : (
-              <form
-                className="reveal"
-                onSubmit={submit}
-                style={{ marginTop: '2rem', display: 'grid', gap: '1rem', maxWidth: '30rem' }}
-              >
-                <Field
-                  label="Name"
-                  value={form.name}
-                  onChange={(v) => setForm({ ...form, name: v })}
-                />
-                <Field
-                  label="Email"
-                  type="email"
-                  value={form.email}
-                  onChange={(v) => setForm({ ...form, email: v })}
-                />
-                <Field
-                  label="What is it"
-                  value={form.note}
-                  onChange={(v) => setForm({ ...form, note: v })}
-                />
-                <button className="btn-line btn-line--light" type="submit" data-cursor="Send">
-                  <span>Send it</span>
-                  <Arrow />
-                </button>
-              </form>
-            )}
-
-            <div
-              className="u-mono reveal"
-              style={{ marginTop: '2.5rem', display: 'flex', gap: '1.2rem', flexWrap: 'wrap' }}
-            >
-              {SOCIALS.map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noreferrer" data-cursor="Open">
-                  {s.label}
+            <div className="channels" style={{ marginTop: '2rem' }}>
+              {CHANNELS.map((c) => (
+                <a
+                  className="channel fade"
+                  key={c.name}
+                  href={c.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-cursor="Open"
+                >
+                  <span className="channel__text">
+                    <b>{c.name}</b>
+                    <small>{c.note}</small>
+                  </span>
+                  <i>
+                    <Arrow size={18} />
+                  </i>
                 </a>
               ))}
             </div>
           </Reveal>
 
           <Reveal>
-            <Unwrap
-              className="reveal"
-              skin="/img/ash-model.png"
-              under="/img/ash-anon.png"
-              alt="Ash as his character model"
+            <Peel
+              className="fade"
+              skin="/img/ash-visor-side.png"
+              under="/img/ash-face.png"
+              alt="Ash, headset on, over his revealed face"
             />
+            <p className="u-mono fade" style={{ marginTop: '0.9rem', opacity: 0.55, textAlign: 'center' }}>
+              Move over the plate · the headset peels, the character looks back
+            </p>
           </Reveal>
         </div>
       </section>
-    </>
-  )
-}
 
-function Field({
-  label,
-  value,
-  onChange,
-  type = 'text',
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  type?: string
-}) {
-  return (
-    <label style={{ display: 'grid', gap: '0.35rem' }}>
-      <span className="u-mono" style={{ opacity: 0.6 }}>
-        {label}
-      </span>
-      <input
-        type={type}
-        value={value}
-        required
-        onChange={(e) => onChange(e.target.value)}
-        style={{
-          background: 'none',
-          border: 0,
-          borderBottom: '1px solid color-mix(in srgb, currentColor 35%, transparent)',
-          padding: '0.55rem 0',
-          font: 'inherit',
-          color: 'inherit',
-          outline: 'none',
-        }}
-      />
-    </label>
+      <section className="sec cta" data-theme="light">
+        <div className="wrap cta__inner">
+          <h2 className="u-display cta__big fade">
+            <Words text="Need the build? *Go get it.*" step={22} />
+          </h2>
+          <a
+            className="btn btn--ink fade"
+            href={LINKS.download}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="Download"
+          >
+            <span>Download Asheo — free core</span>
+            <ExternalIcon size={16} />
+          </a>
+        </div>
+      </section>
+    </>
   )
 }
